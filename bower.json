@@ -1,0 +1,24 @@
+{
+  "name": "my-project",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-prelude": "^3.1.1",
+    "purescript-console": "^3.0.0",
+    "purescript-math": "^2.1.0",
+    "purescript-globals": "^3.0.0",
+    "purescript-lists": "^4.12.0",
+    "purescript-arrays": "^4.2.2",
+    "purescript-record": "^0.2.6",
+    "purescript-profunctor-lenses": "^3.8.0",
+    "purescript-foreign-generic": "^5.0.1",
+    "purescript-b64": "^0.0.4"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^3.0.0"
+  }
+}
