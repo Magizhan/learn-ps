@@ -77,6 +77,7 @@ export default function GameScreen({
       <div className="pattern-info">
         <h2>{pattern.name}</h2>
         <p>{pattern.description}</p>
+        {pattern.hint && <p className="pattern-hint">Hint: {pattern.hint}</p>}
       </div>
 
       {/* Canvas */}

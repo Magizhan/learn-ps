@@ -11,7 +11,7 @@
 
 .app-inner {
   width: 100%;
-  max-width: 600px;
+  max-width: 680px;
 }
 
 /* ─── Screen base ────────────────────────────────────────── */
@@ -220,6 +220,19 @@
 .pattern-info p {
   font-size: 0.9rem;
   color: var(--text-secondary);
+}
+
+.pattern-hint {
+  display: inline-block;
+  margin-top: 0.3rem;
+  padding: 0.2rem 0.8rem;
+  background: rgba(232, 166, 64, 0.12);
+  border: 1px solid rgba(232, 166, 64, 0.3);
+  border-radius: 20px;
+  font-size: 0.82rem;
+  color: var(--accent-secondary);
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 /* Canvas */
