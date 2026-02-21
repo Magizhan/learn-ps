@@ -33,6 +33,7 @@ export default function App() {
   const [levelPatterns, setLevelPatterns] = useState([]);
   const [lastResult, setLastResult] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   const { timeLeft, isRunning, start, stop, reset } = useTimer(TIMER_SECONDS);
 
@@ -42,18 +43,16 @@ export default function App() {
   useEffect(() => {
     if (gameState === "playing" && timeLeft === 0 && !isRunning && !submitted) {
       setSubmitted(true);
-      const points = 0;
-      const newScore = score;
       const patternsCompleted = patternIndex + 1;
       const isLevelComplete = patternsCompleted >= PATTERNS_PER_LEVEL;
       const isGameComplete = isLevelComplete && level >= MAX_LEVEL;
 
       setLastResult({
         correct: false,
-        playerAnswer: "—",
+        playerAnswer: "\u2014",
         correctAnswer: currentPattern?.totalMatchsticks ?? 0,
-        pointsEarned: points,
-        totalScore: newScore,
+        pointsEarned: 0,
+        totalScore: score,
         level,
         timeLeft: 0,
         isLevelComplete,
@@ -70,6 +69,7 @@ export default function App() {
       setLevelPatterns(picked);
       setPatternIndex(0);
       setSubmitted(false);
+      setIsPaused(false);
       setGameState("playing");
       reset(TIMER_SECONDS);
       start();
@@ -113,9 +113,23 @@ export default function App() {
     [currentPattern, timeLeft, score, patternIndex, level, stop, submitted]
   );
 
+  const handlePause = useCallback(() => {
+    setIsPaused((prev) => {
+      if (prev) {
+        // Resuming
+        start();
+      } else {
+        // Pausing
+        stop();
+      }
+      return !prev;
+    });
+  }, [start, stop]);
+
   const handleNext = useCallback(() => {
     setPatternIndex((prev) => prev + 1);
     setSubmitted(false);
+    setIsPaused(false);
     setGameState("playing");
     reset(TIMER_SECONDS);
     start();
@@ -149,6 +163,8 @@ export default function App() {
             score={score}
             timeLeft={timeLeft}
             onSubmit={handleSubmit}
+            onPause={handlePause}
+            isPaused={isPaused}
             patternsCompleted={patternIndex}
             patternsPerLevel={PATTERNS_PER_LEVEL}
           />
