@@ -7,6 +7,8 @@ export default function GameScreen({
   score,
   timeLeft,
   onSubmit,
+  onPause,
+  isPaused,
   patternsCompleted,
   patternsPerLevel,
 }) {
@@ -77,38 +79,57 @@ export default function GameScreen({
       <div className="pattern-info">
         <h2>{pattern.name}</h2>
         <p>{pattern.description}</p>
-        {pattern.hint && <p className="pattern-hint">Hint: {pattern.hint}</p>}
       </div>
 
       {/* Canvas */}
       <MatchstickCanvas matchsticks={pattern.matchsticks} width={500} height={320} />
 
-      {/* Answer form */}
-      <form
-        className={`answer-form ${shake ? "shake" : ""}`}
-        onSubmit={handleSubmit}
-      >
-        <label htmlFor="answer-input">How many matchsticks?</label>
-        <div className="answer-row">
-          <input
-            id="answer-input"
-            type="number"
-            min="0"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            placeholder="Enter number..."
-            autoFocus
-            disabled={timeLeft === 0}
-          />
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={timeLeft === 0 || answer === ""}
-          >
-            Submit
+      {/* Pause button */}
+      {isPaused && (
+        <div className="paused-overlay">
+          <p>Paused</p>
+          <button className="btn btn-primary" onClick={onPause}>
+            Resume
           </button>
         </div>
-      </form>
+      )}
+
+      {/* Answer form */}
+      {!isPaused && (
+        <form
+          className={`answer-form ${shake ? "shake" : ""}`}
+          onSubmit={handleSubmit}
+        >
+          <label htmlFor="answer-input">How many matchsticks?</label>
+          <div className="answer-row">
+            <input
+              id="answer-input"
+              type="number"
+              min="0"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              placeholder="Enter number..."
+              autoFocus
+              disabled={timeLeft === 0}
+            />
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={timeLeft === 0 || answer === ""}
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-pause"
+              onClick={onPause}
+              title="Pause game"
+            >
+              ||
+            </button>
+          </div>
+        </form>
+      )}
 
       {timeLeft === 0 && (
         <div className="time-up-overlay">

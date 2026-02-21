@@ -1,7 +1,6 @@
 // Matchstick pattern definitions
 // Each matchstick is {x1, y1, x2, y2} — head is at (x1,y1)
 // Coordinate space is arbitrary; the canvas auto-fits with padding.
-// GRID = standard matchstick length
 
 const G = 30; // one matchstick length
 
@@ -13,7 +12,6 @@ function m(x1, y1, x2, y2) {
 // SHAPE PRIMITIVES
 // ═══════════════════════════════════════════════════════════════
 
-// L-shape (2 sticks): vertical down, horizontal right
 function lShape(ox, oy) {
   return [
     m(ox, oy, ox, oy + G),
@@ -21,7 +19,6 @@ function lShape(ox, oy) {
   ];
 }
 
-// V-shape / chevron (2 sticks)
 function vShape(ox, oy) {
   return [
     m(ox, oy, ox + G * 0.5, oy + G * 0.7),
@@ -29,72 +26,63 @@ function vShape(ox, oy) {
   ];
 }
 
-// Triangle (3 sticks)
 function triangle(ox, oy) {
   return [
-    m(ox, oy + G, ox + G * 0.5, oy),           // left slope up
-    m(ox + G, oy + G, ox + G * 0.5, oy),        // right slope up
-    m(ox, oy + G, ox + G, oy + G),              // base
+    m(ox, oy + G, ox + G * 0.5, oy),
+    m(ox + G, oy + G, ox + G * 0.5, oy),
+    m(ox, oy + G, ox + G, oy + G),
   ];
 }
 
-// Inverted triangle (3 sticks)
 function triDown(ox, oy) {
   return [
-    m(ox, oy, ox + G * 0.5, oy + G),            // left slope down
-    m(ox + G, oy, ox + G * 0.5, oy + G),        // right slope down
-    m(ox, oy, ox + G, oy),                       // top
+    m(ox, oy, ox + G * 0.5, oy + G),
+    m(ox + G, oy, ox + G * 0.5, oy + G),
+    m(ox, oy, ox + G, oy),
   ];
 }
 
-// Square (4 sticks)
 function square(ox, oy) {
   return [
-    m(ox, oy, ox + G, oy),         // top
-    m(ox + G, oy, ox + G, oy + G), // right
-    m(ox + G, oy + G, ox, oy + G), // bottom
-    m(ox, oy + G, ox, oy),         // left
+    m(ox, oy, ox + G, oy),
+    m(ox + G, oy, ox + G, oy + G),
+    m(ox + G, oy + G, ox, oy + G),
+    m(ox, oy + G, ox, oy),
   ];
 }
 
-// Pentagon (5 sticks) — flat bottom
 function pentagon(ox, oy) {
   const w = G;
-  const h = G * 1.0;
-  const topY = oy;
+  const h = G;
+  const cx = ox + w / 2;
   const midY = oy + h * 0.38;
   const botY = oy + h;
-  const cx = ox + w / 2;
   return [
-    m(cx, topY, ox + w, midY),        // top-right slope
-    m(ox + w, midY, ox + w * 0.82, botY),  // right side
-    m(ox + w * 0.82, botY, ox + w * 0.18, botY), // bottom
-    m(ox + w * 0.18, botY, ox, midY),  // left side
-    m(ox, midY, cx, topY),            // top-left slope
+    m(cx, oy, ox + w, midY),
+    m(ox + w, midY, ox + w * 0.82, botY),
+    m(ox + w * 0.82, botY, ox + w * 0.18, botY),
+    m(ox + w * 0.18, botY, ox, midY),
+    m(ox, midY, cx, oy),
   ];
 }
 
-// Hexagon (6 sticks)
 function hexagon(ox, oy) {
   const w = G;
   const h = G * 0.866;
   const q = w * 0.25;
   return [
-    m(ox + q, oy, ox + w - q, oy),                 // top
-    m(ox + w - q, oy, ox + w, oy + h / 2),         // top-right
-    m(ox + w, oy + h / 2, ox + w - q, oy + h),     // bottom-right
-    m(ox + w - q, oy + h, ox + q, oy + h),         // bottom
-    m(ox + q, oy + h, ox, oy + h / 2),             // bottom-left
-    m(ox, oy + h / 2, ox + q, oy),                 // top-left
+    m(ox + q, oy, ox + w - q, oy),
+    m(ox + w - q, oy, ox + w, oy + h / 2),
+    m(ox + w, oy + h / 2, ox + w - q, oy + h),
+    m(ox + w - q, oy + h, ox + q, oy + h),
+    m(ox + q, oy + h, ox, oy + h / 2),
+    m(ox, oy + h / 2, ox + q, oy),
   ];
 }
 
-// Diamond (4 sticks)
 function diamond(ox, oy) {
   const cx = ox + G / 2;
   const cy = oy + G / 2;
-  const rx = G / 2;
-  const ry = G / 2;
   return [
     m(cx, oy, ox + G, cy),
     m(ox + G, cy, cx, oy + G),
@@ -103,34 +91,23 @@ function diamond(ox, oy) {
   ];
 }
 
-// T-shape (3 sticks)
-function tShape(ox, oy) {
-  return [
-    m(ox, oy, ox + G, oy),                             // horizontal top-left
-    m(ox + G, oy, ox + G * 2, oy),                     // horizontal top-right
-    m(ox + G, oy, ox + G, oy + G),                     // vertical down
-  ];
-}
-
-// Plus/cross shape (4 sticks)
 function plus(ox, oy) {
   const cx = ox + G / 2;
   const cy = oy + G / 2;
   const half = G / 2;
   return [
-    m(cx, cy - half, cx, cy),       // top
-    m(cx, cy, cx, cy + half),       // bottom
-    m(cx - half, cy, cx, cy),       // left
-    m(cx, cy, cx + half, cy),       // right
+    m(cx, cy - half, cx, cy),
+    m(cx, cy, cx, cy + half),
+    m(cx - half, cy, cx, cy),
+    m(cx, cy, cx + half, cy),
   ];
 }
 
-// Arrow pointing right (3 sticks)
 function arrowRight(ox, oy) {
   return [
-    m(ox, oy + G * 0.5, ox + G * 0.65, oy + G * 0.5), // shaft
-    m(ox + G, oy + G * 0.5, ox + G * 0.65, oy),        // upper head
-    m(ox + G, oy + G * 0.5, ox + G * 0.65, oy + G),    // lower head
+    m(ox, oy + G * 0.5, ox + G * 0.65, oy + G * 0.5),
+    m(ox + G, oy + G * 0.5, ox + G * 0.65, oy),
+    m(ox + G, oy + G * 0.5, ox + G * 0.65, oy + G),
   ];
 }
 
@@ -138,43 +115,38 @@ function arrowRight(ox, oy) {
 // CONNECTED / SHARED-EDGE SHAPES
 // ═══════════════════════════════════════════════════════════════
 
-// Row of connected squares sharing vertical edges
-// n squares => 2n + (n+1) = 3n+1 sticks
+// n squares in a row sharing vertical edges => 3n+1 sticks
 function connectedSquaresRow(ox, oy, n) {
   const sticks = [];
   for (let i = 0; i < n; i++) {
-    sticks.push(m(ox + i * G, oy, ox + (i + 1) * G, oy));         // top
-    sticks.push(m(ox + i * G, oy + G, ox + (i + 1) * G, oy + G)); // bottom
+    sticks.push(m(ox + i * G, oy, ox + (i + 1) * G, oy));
+    sticks.push(m(ox + i * G, oy + G, ox + (i + 1) * G, oy + G));
   }
   for (let i = 0; i <= n; i++) {
-    sticks.push(m(ox + i * G, oy, ox + i * G, oy + G));           // verticals
+    sticks.push(m(ox + i * G, oy, ox + i * G, oy + G));
   }
   return sticks;
 }
 
-// Column of connected squares sharing horizontal edges
-// n squares => 2n + (n+1) = 3n+1 sticks
+// n squares in a column sharing horizontal edges => 3n+1 sticks
 function connectedSquaresCol(ox, oy, n) {
   const sticks = [];
   for (let i = 0; i < n; i++) {
-    sticks.push(m(ox, oy + i * G, ox, oy + (i + 1) * G));         // left
-    sticks.push(m(ox + G, oy + i * G, ox + G, oy + (i + 1) * G)); // right
+    sticks.push(m(ox, oy + i * G, ox, oy + (i + 1) * G));
+    sticks.push(m(ox + G, oy + i * G, ox + G, oy + (i + 1) * G));
   }
   for (let i = 0; i <= n; i++) {
-    sticks.push(m(ox, oy + i * G, ox + G, oy + i * G));           // horizontals
+    sticks.push(m(ox, oy + i * G, ox + G, oy + i * G));
   }
   return sticks;
 }
 
-// Row of triangles sharing sides (zigzag pattern)
-// n triangles => 1 base + 2n slopes = 2n+1 sticks
+// n triangles in a row sharing base segments => n base + 2n slopes = 3n sticks
 function triangleRow(ox, oy, n) {
   const sticks = [];
-  // Base line split into n segments
   for (let i = 0; i < n; i++) {
     sticks.push(m(ox + i * G, oy + G, ox + (i + 1) * G, oy + G));
   }
-  // Slopes
   for (let i = 0; i < n; i++) {
     const cx = ox + i * G + G * 0.5;
     sticks.push(m(ox + i * G, oy + G, cx, oy));
@@ -184,16 +156,13 @@ function triangleRow(ox, oy, n) {
 }
 
 // Grid of squares (rows x cols) sharing all edges
-// sticks = rows*(cols+1) + cols*(rows+1)
 function squareGrid(ox, oy, cols, rows) {
   const sticks = [];
-  // Horizontal lines
   for (let r = 0; r <= rows; r++) {
     for (let c = 0; c < cols; c++) {
       sticks.push(m(ox + c * G, oy + r * G, ox + (c + 1) * G, oy + r * G));
     }
   }
-  // Vertical lines
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c <= cols; c++) {
       sticks.push(m(ox + c * G, oy + r * G, ox + c * G, oy + (r + 1) * G));
@@ -203,179 +172,83 @@ function squareGrid(ox, oy, cols, rows) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// COMPOUND / CREATIVE SHAPES
+// COMPOUND SHAPES
 // ═══════════════════════════════════════════════════════════════
 
-// House: square body + triangle roof (6 sticks — shared top edge)
+// House: triangle roof + square body + roof base line = 6 sticks
 function house(ox, oy) {
   return [
-    // Triangle roof
     m(ox, oy + G, ox + G * 0.5, oy),
     m(ox + G * 0.5, oy, ox + G, oy + G),
-    // Square body (3 sides, top shared with roof base)
     m(ox + G, oy + G, ox + G, oy + G * 2),
     m(ox + G, oy + G * 2, ox, oy + G * 2),
     m(ox, oy + G * 2, ox, oy + G),
-    // Roof base line (visible structural line)
     m(ox, oy + G, ox + G, oy + G),
   ];
 }
 
-// Bow-tie / hourglass: two triangles point-to-point (6 sticks)
+// Bow-tie / hourglass: 6 sticks
 function bowTie(ox, oy) {
   const cx = ox + G;
   const cy = oy + G * 0.5;
   return [
-    // Left triangle
     m(ox, oy, cx, cy),
     m(ox, oy + G, cx, cy),
     m(ox, oy, ox, oy + G),
-    // Right triangle
     m(cx, cy, ox + G * 2, oy),
     m(cx, cy, ox + G * 2, oy + G),
     m(ox + G * 2, oy, ox + G * 2, oy + G),
   ];
 }
 
-// Kite shape (4 sticks) — tall diamond
-function kite(ox, oy) {
-  const cx = ox + G * 0.5;
+// Tree: triangle canopy + trunk = 4 sticks
+function tree(ox, oy) {
   return [
-    m(cx, oy, ox + G, oy + G * 0.4),
-    m(ox + G, oy + G * 0.4, cx, oy + G),
-    m(cx, oy + G, ox, oy + G * 0.4),
-    m(ox, oy + G * 0.4, cx, oy),
+    m(ox, oy + G, ox + G * 0.5, oy),
+    m(ox + G * 0.5, oy, ox + G, oy + G),
+    m(ox, oy + G, ox + G, oy + G),
+    m(ox + G * 0.5, oy + G, ox + G * 0.5, oy + G * 1.6),
   ];
 }
 
-// Rocket: column of squares with triangle nose + triangle fins
-function rocket(ox, oy) {
-  const sticks = [];
-  // Nose cone (triangle on top)
-  sticks.push(m(ox, oy + G, ox + G * 0.5, oy));
-  sticks.push(m(ox + G * 0.5, oy, ox + G, oy + G));
-
-  // Body: 3 connected squares vertically (sharing horizontals)
-  for (let i = 0; i < 3; i++) {
-    const sy = oy + G + i * G;
-    sticks.push(m(ox, sy, ox, sy + G));       // left
-    sticks.push(m(ox + G, sy, ox + G, sy + G)); // right
-  }
-  // Horizontal lines (4 lines for 3 squares)
-  for (let i = 0; i <= 3; i++) {
-    sticks.push(m(ox, oy + G + i * G, ox + G, oy + G + i * G));
-  }
-
-  // Left fin (triangle pointing left)
-  const finY = oy + G * 3;
-  sticks.push(m(ox, finY, ox - G * 0.5, finY + G * 0.7));
-  sticks.push(m(ox - G * 0.5, finY + G * 0.7, ox, finY + G));
-
-  // Right fin (triangle pointing right)
-  sticks.push(m(ox + G, finY, ox + G + G * 0.5, finY + G * 0.7));
-  sticks.push(m(ox + G + G * 0.5, finY + G * 0.7, ox + G, finY + G));
-
-  // Exhaust (inverted triangle at bottom)
-  const exY = oy + G * 4;
-  sticks.push(m(ox, exY, ox + G * 0.5, exY + G * 0.6));
-  sticks.push(m(ox + G, exY, ox + G * 0.5, exY + G * 0.6));
-
-  return sticks;
-}
-
-// Star of David (2 overlapping triangles = 6 sticks)
+// Star of David: 2 overlapping triangles = 6 sticks
 function starOfDavid(ox, oy) {
   const w = G * 1.2;
-  const h = G * 1.0;
+  const h = G;
   const cx = ox + w / 2;
   return [
-    // Upward triangle
     m(ox, oy + h * 0.7, cx, oy),
     m(cx, oy, ox + w, oy + h * 0.7),
     m(ox + w, oy + h * 0.7, ox, oy + h * 0.7),
-    // Downward triangle
     m(ox, oy + h * 0.3, cx, oy + h),
     m(cx, oy + h, ox + w, oy + h * 0.3),
     m(ox + w, oy + h * 0.3, ox, oy + h * 0.3),
   ];
 }
 
-// Windmill / pinwheel (8 sticks)
+// Windmill: 8 sticks radiating from center
 function windmill(ox, oy) {
   const cx = ox + G;
   const cy = oy + G;
   return [
-    // Top blade
     m(cx, cy, cx - G * 0.3, cy - G),
     m(cx, cy, cx + G * 0.3, cy - G),
-    // Right blade
     m(cx, cy, cx + G, cy - G * 0.3),
     m(cx, cy, cx + G, cy + G * 0.3),
-    // Bottom blade
     m(cx, cy, cx + G * 0.3, cy + G),
     m(cx, cy, cx - G * 0.3, cy + G),
-    // Left blade
     m(cx, cy, cx - G, cy + G * 0.3),
     m(cx, cy, cx - G, cy - G * 0.3),
   ];
 }
 
-// Fence: repeated vertical posts with horizontal rails
-function fence(ox, oy, posts) {
-  const sticks = [];
-  const spacing = G * 0.6;
-  for (let i = 0; i < posts; i++) {
-    sticks.push(m(ox + i * spacing, oy, ox + i * spacing, oy + G)); // post
-  }
-  // Two horizontal rails
-  const railY1 = oy + G * 0.3;
-  const railY2 = oy + G * 0.7;
-  for (let i = 0; i < posts - 1; i++) {
-    sticks.push(m(ox + i * spacing, railY1, ox + (i + 1) * spacing, railY1));
-    sticks.push(m(ox + i * spacing, railY2, ox + (i + 1) * spacing, railY2));
-  }
-  return sticks;
-}
-
-// Fish shape (7 sticks)
-function fish(ox, oy) {
-  const w = G * 1.5;
-  const h = G;
-  return [
-    // Body (diamond)
-    m(ox + w * 0.3, oy, ox + w * 0.7, oy + h * 0.5),
-    m(ox + w * 0.7, oy + h * 0.5, ox + w * 0.3, oy + h),
-    m(ox + w * 0.3, oy + h, ox, oy + h * 0.5),
-    m(ox, oy + h * 0.5, ox + w * 0.3, oy),
-    // Tail (V)
-    m(ox + w * 0.7, oy + h * 0.5, ox + w, oy),
-    m(ox + w * 0.7, oy + h * 0.5, ox + w, oy + h),
-    // Eye line
-    m(ox + w * 0.1, oy + h * 0.4, ox + w * 0.1, oy + h * 0.6),
-  ];
-}
-
-// Staircase (n steps, each step = 2 sticks)
-function stairs(ox, oy, steps) {
-  const sticks = [];
-  for (let i = 0; i < steps; i++) {
-    sticks.push(m(ox + i * G, oy + i * G, ox + i * G, oy + (i + 1) * G)); // vertical
-    sticks.push(m(ox + i * G, oy + (i + 1) * G, ox + (i + 1) * G, oy + (i + 1) * G)); // horizontal
-  }
-  return sticks;
-}
-
-// Crown shape (9 sticks)
+// Crown: 9 sticks
 function crown(ox, oy) {
   const w = G * 2;
   return [
-    // Base
     m(ox, oy + G, ox + w, oy + G),
-    // Left wall
     m(ox, oy + G, ox, oy + G * 0.4),
-    // Right wall
     m(ox + w, oy + G, ox + w, oy + G * 0.4),
-    // Three points
     m(ox, oy + G * 0.4, ox + w * 0.2, oy),
     m(ox + w * 0.2, oy, ox + w * 0.4, oy + G * 0.4),
     m(ox + w * 0.4, oy + G * 0.4, ox + w * 0.5, oy),
@@ -385,337 +258,395 @@ function crown(ox, oy) {
   ];
 }
 
-// Tree: triangle on top of vertical trunk (5 sticks)
-function tree(ox, oy) {
+// Fence: posts + 2 horizontal rails
+function fence(ox, oy, posts) {
+  const sticks = [];
+  const spacing = G * 0.6;
+  for (let i = 0; i < posts; i++) {
+    sticks.push(m(ox + i * spacing, oy, ox + i * spacing, oy + G));
+  }
+  const railY1 = oy + G * 0.3;
+  const railY2 = oy + G * 0.7;
+  for (let i = 0; i < posts - 1; i++) {
+    sticks.push(m(ox + i * spacing, railY1, ox + (i + 1) * spacing, railY1));
+    sticks.push(m(ox + i * spacing, railY2, ox + (i + 1) * spacing, railY2));
+  }
+  return sticks;
+}
+
+// Fish: diamond body + V tail + eye = 7 sticks
+function fish(ox, oy) {
+  const w = G * 1.5;
+  const h = G;
   return [
-    // Triangle canopy
-    m(ox, oy + G, ox + G * 0.5, oy),
-    m(ox + G * 0.5, oy, ox + G, oy + G),
-    m(ox, oy + G, ox + G, oy + G),
-    // Trunk (2 sticks as visible trunk width)
-    m(ox + G * 0.5, oy + G, ox + G * 0.5, oy + G * 1.6),
+    m(ox + w * 0.3, oy, ox + w * 0.7, oy + h * 0.5),
+    m(ox + w * 0.7, oy + h * 0.5, ox + w * 0.3, oy + h),
+    m(ox + w * 0.3, oy + h, ox, oy + h * 0.5),
+    m(ox, oy + h * 0.5, ox + w * 0.3, oy),
+    m(ox + w * 0.7, oy + h * 0.5, ox + w, oy),
+    m(ox + w * 0.7, oy + h * 0.5, ox + w, oy + h),
+    m(ox + w * 0.1, oy + h * 0.4, ox + w * 0.1, oy + h * 0.6),
   ];
 }
 
-// Boat: hull + mast + sail (6 sticks)
+// Staircase: n steps, each step = 2 sticks
+function stairs(ox, oy, steps) {
+  const sticks = [];
+  for (let i = 0; i < steps; i++) {
+    sticks.push(m(ox + i * G, oy + i * G, ox + i * G, oy + (i + 1) * G));
+    sticks.push(m(ox + i * G, oy + (i + 1) * G, ox + (i + 1) * G, oy + (i + 1) * G));
+  }
+  return sticks;
+}
+
+// Boat: hull + mast + sail = 6 sticks
 function boat(ox, oy) {
   return [
-    // Hull (trapezoid bottom)
-    m(ox + G * 0.3, oy + G, ox + G * 1.7, oy + G),    // deck
-    m(ox + G * 0.3, oy + G, ox + G * 0.6, oy + G * 1.4), // left hull
-    m(ox + G * 1.7, oy + G, ox + G * 1.4, oy + G * 1.4), // right hull
-    m(ox + G * 0.6, oy + G * 1.4, ox + G * 1.4, oy + G * 1.4), // bottom
-    // Mast
+    m(ox + G * 0.3, oy + G, ox + G * 1.7, oy + G),
+    m(ox + G * 0.3, oy + G, ox + G * 0.6, oy + G * 1.4),
+    m(ox + G * 1.7, oy + G, ox + G * 1.4, oy + G * 1.4),
+    m(ox + G * 0.6, oy + G * 1.4, ox + G * 1.4, oy + G * 1.4),
     m(ox + G, oy + G, ox + G, oy),
-    // Sail
     m(ox + G, oy, ox + G * 1.6, oy + G),
   ];
 }
 
+// Rocket: nose + 3 body squares + 2 fins + exhaust = 18 sticks
+function rocket(ox, oy) {
+  const sticks = [];
+  sticks.push(m(ox, oy + G, ox + G * 0.5, oy));
+  sticks.push(m(ox + G * 0.5, oy, ox + G, oy + G));
+  for (let i = 0; i < 3; i++) {
+    const sy = oy + G + i * G;
+    sticks.push(m(ox, sy, ox, sy + G));
+    sticks.push(m(ox + G, sy, ox + G, sy + G));
+  }
+  for (let i = 0; i <= 3; i++) {
+    sticks.push(m(ox, oy + G + i * G, ox + G, oy + G + i * G));
+  }
+  const finY = oy + G * 3;
+  sticks.push(m(ox, finY, ox - G * 0.5, finY + G * 0.7));
+  sticks.push(m(ox - G * 0.5, finY + G * 0.7, ox, finY + G));
+  sticks.push(m(ox + G, finY, ox + G + G * 0.5, finY + G * 0.7));
+  sticks.push(m(ox + G + G * 0.5, finY + G * 0.7, ox + G, finY + G));
+  const exY = oy + G * 4;
+  sticks.push(m(ox, exY, ox + G * 0.5, exY + G * 0.6));
+  sticks.push(m(ox + G, exY, ox + G * 0.5, exY + G * 0.6));
+  return sticks;
+}
+
 // ═══════════════════════════════════════════════════════════════
-// LEVEL DEFINITIONS
-// 5 levels, 5 patterns each, increasing complexity
+// LEVEL DEFINITIONS — emphasizing REPETITIVE patterns
+// with non-repeating extras appended in higher levels
 // ═══════════════════════════════════════════════════════════════
 
+const SP = G + 10; // spacing between separate shapes
+
 export const levels = [
-  // ━━━ LEVEL 1: Simple repeating shapes (2-3 sticks each) ━━━
+  // ━━━ LEVEL 1: Pure repetition of simple shapes ━━━
   {
     level: 1,
     patterns: [
       {
         name: "Row of L-shapes",
-        description: "Three L-shapes in a row. Each L = 2 matchsticks.",
-        hint: "3 x 2",
+        description: "Five identical L-shapes in a row.",
         matchsticks: [
           ...lShape(0, 30),
-          ...lShape(40, 30),
-          ...lShape(80, 30),
+          ...lShape(SP, 30),
+          ...lShape(SP * 2, 30),
+          ...lShape(SP * 3, 30),
+          ...lShape(SP * 4, 30),
         ],
-        totalMatchsticks: 6,
       },
       {
-        name: "Four V-shapes",
-        description: "Four V-shapes (chevrons) in a row.",
-        hint: "4 x 2",
+        name: "V-shape Parade",
+        description: "Six V-shapes (chevrons) lined up.",
         matchsticks: [
           ...vShape(0, 30),
-          ...vShape(40, 30),
-          ...vShape(80, 30),
-          ...vShape(120, 30),
+          ...vShape(SP, 30),
+          ...vShape(SP * 2, 30),
+          ...vShape(SP * 3, 30),
+          ...vShape(SP * 4, 30),
+          ...vShape(SP * 5, 30),
         ],
-        totalMatchsticks: 8,
       },
       {
-        name: "Two Triangles",
-        description: "Two separate triangles side by side.",
-        hint: "2 x 3",
+        name: "Triangle Row",
+        description: "Four separate triangles in a line.",
         matchsticks: [
-          ...triangle(5, 30),
-          ...triangle(50, 30),
+          ...triangle(0, 30),
+          ...triangle(SP, 30),
+          ...triangle(SP * 2, 30),
+          ...triangle(SP * 3, 30),
         ],
-        totalMatchsticks: 6,
       },
       {
         name: "Staircase",
-        description: "A staircase of 4 steps going down.",
-        hint: "4 x 2",
-        matchsticks: stairs(10, 10, 4),
-        totalMatchsticks: 8,
+        description: "A staircase of five steps going down.",
+        matchsticks: stairs(10, 5, 5),
       },
       {
-        name: "Three Plus Signs",
-        description: "Three plus (+) shapes in a row.",
-        hint: "3 x 4",
+        name: "Plus Signs",
+        description: "Four plus (+) shapes in a row.",
         matchsticks: [
-          ...plus(5, 30),
-          ...plus(50, 30),
-          ...plus(95, 30),
+          ...plus(0, 30),
+          ...plus(SP, 30),
+          ...plus(SP * 2, 30),
+          ...plus(SP * 3, 30),
         ],
-        totalMatchsticks: 12,
       },
     ],
   },
 
-  // ━━━ LEVEL 2: Larger repeating shapes (4-6 sticks each) ━━━
+  // ━━━ LEVEL 2: Repetition of larger shapes ━━━
   {
     level: 2,
     patterns: [
       {
-        name: "Three Squares",
-        description: "Three separate squares in a row.",
-        hint: "3 x 4",
+        name: "Square Line",
+        description: "Five separate squares in a row.",
         matchsticks: [
           ...square(0, 30),
-          ...square(45, 30),
-          ...square(90, 30),
+          ...square(SP, 30),
+          ...square(SP * 2, 30),
+          ...square(SP * 3, 30),
+          ...square(SP * 4, 30),
         ],
-        totalMatchsticks: 12,
       },
       {
-        name: "Two Pentagons",
-        description: "Two pentagons side by side.",
-        hint: "2 x 5",
+        name: "Pentagon Parade",
+        description: "Three pentagons side by side.",
         matchsticks: [
-          ...pentagon(5, 25),
-          ...pentagon(55, 25),
+          ...pentagon(0, 25),
+          ...pentagon(SP, 25),
+          ...pentagon(SP * 2, 25),
         ],
-        totalMatchsticks: 10,
       },
       {
-        name: "Two Hexagons",
-        description: "Two hexagons side by side.",
-        hint: "2 x 6",
+        name: "Hexagon Row",
+        description: "Three hexagons in a line.",
         matchsticks: [
-          ...hexagon(5, 30),
-          ...hexagon(55, 30),
+          ...hexagon(0, 30),
+          ...hexagon(SP, 30),
+          ...hexagon(SP * 2, 30),
         ],
-        totalMatchsticks: 12,
       },
       {
-        name: "Diamonds & Triangles",
-        description: "Two diamonds with a triangle between them.",
-        hint: "Think: 4 + 3 + 4",
+        name: "Diamond Chain",
+        description: "Five diamonds in a row.",
         matchsticks: [
           ...diamond(0, 30),
-          ...triangle(40, 30),
-          ...diamond(80, 30),
+          ...diamond(SP, 30),
+          ...diamond(SP * 2, 30),
+          ...diamond(SP * 3, 30),
+          ...diamond(SP * 4, 30),
         ],
-        totalMatchsticks: 11,
       },
       {
-        name: "Bow-Tie Pair",
-        description: "Two bow-tie shapes side by side.",
-        hint: "2 x 6",
+        name: "House Row",
+        description: "Four houses side by side.",
         matchsticks: [
-          ...bowTie(0, 30),
-          ...bowTie(75, 30),
+          ...house(0, 15),
+          ...house(SP, 15),
+          ...house(SP * 2, 15),
+          ...house(SP * 3, 15),
         ],
-        totalMatchsticks: 12,
       },
     ],
   },
 
-  // ━━━ LEVEL 3: Connected shapes (shared edges!) ━━━
+  // ━━━ LEVEL 3: Connected / shared-edge repetitions ━━━
   {
     level: 3,
     patterns: [
       {
-        name: "Connected Squares (4)",
-        description: "Four squares sharing edges in a row. Shared walls count once!",
-        hint: "3n+1 where n=4",
-        matchsticks: connectedSquaresRow(0, 30, 4),
-        totalMatchsticks: 13,
+        name: "Connected Squares",
+        description: "Six squares sharing edges in a row. Shared walls count once!",
+        matchsticks: connectedSquaresRow(0, 30, 6),
       },
       {
         name: "Triangle Wave",
-        description: "Five triangles sharing a base line. Count each stick!",
-        hint: "n + 2n base segments",
-        matchsticks: triangleRow(0, 25, 5),
-        totalMatchsticks: 15,
+        description: "Six triangles sharing a base line.",
+        matchsticks: triangleRow(0, 25, 6),
       },
       {
-        name: "Square Grid 2x2",
-        description: "A 2x2 grid of squares sharing all edges.",
-        hint: "2x3 + 3x2",
-        matchsticks: squareGrid(15, 20, 2, 2),
-        totalMatchsticks: 12,
+        name: "Square Grid",
+        description: "A 3x2 grid of squares sharing all edges.",
+        matchsticks: squareGrid(10, 20, 3, 2),
       },
       {
-        name: "Three Houses",
-        description: "Three houses (square + triangle roof), each house is separate.",
-        hint: "3 x 6",
+        name: "Square Tower",
+        description: "Five connected squares stacked in a column.",
+        matchsticks: connectedSquaresCol(30, 0, 5),
+      },
+      {
+        name: "Bow-Tie Row",
+        description: "Three bow-tie shapes in a line.",
         matchsticks: [
-          ...house(0, 15),
-          ...house(50, 15),
-          ...house(100, 15),
+          ...bowTie(0, 30),
+          ...bowTie(G * 2.5, 30),
+          ...bowTie(G * 5, 30),
         ],
-        totalMatchsticks: 18,
-      },
-      {
-        name: "L-shape Tower",
-        description: "Three connected squares in a column. Shared edges count once!",
-        hint: "3n+1 where n=3",
-        matchsticks: connectedSquaresCol(30, 0, 3),
-        totalMatchsticks: 10,
       },
     ],
   },
 
-  // ━━━ LEVEL 4: Compound shapes (mixed repeating + fixed) ━━━
+  // ━━━ LEVEL 4: Repetitive shapes + non-repeating extras ━━━
   {
     level: 4,
     patterns: [
       {
+        name: "Triangles with a Crown",
+        description: "Five triangles in a row, with a crown shape at the end.",
+        matchsticks: [
+          ...triangle(0, 30),
+          ...triangle(SP, 30),
+          ...triangle(SP * 2, 30),
+          ...triangle(SP * 3, 30),
+          ...triangle(SP * 4, 30),
+          // Non-repeating extra
+          ...crown(SP * 5 + 5, 25),
+        ],
+      },
+      {
+        name: "Squares and a Star",
+        description: "Four squares in a row, followed by a Star of David.",
+        matchsticks: [
+          ...square(0, 30),
+          ...square(SP, 30),
+          ...square(SP * 2, 30),
+          ...square(SP * 3, 30),
+          // Non-repeating extra
+          ...starOfDavid(SP * 4 + 5, 30),
+        ],
+      },
+      {
         name: "Houses with Fence",
-        description: "Two houses with a fence of 5 posts and 2 rails between them.",
-        hint: "Houses + fence posts + rails",
+        description: "Three houses in a row with a fence on the right.",
         matchsticks: [
           ...house(0, 10),
-          ...fence(45, 30, 5),
-          ...house(120, 10),
+          ...house(SP, 10),
+          ...house(SP * 2, 10),
+          // Non-repeating extra
+          ...fence(SP * 3, 30, 5),
         ],
-        totalMatchsticks: 12 + 5 + 8, // 2 houses (12) + 5 posts + 8 rails
       },
       {
-        name: "Star of David Pair",
-        description: "Two Stars of David with a diamond in the middle.",
-        hint: "6 + 4 + 6",
+        name: "Connected Squares + Triangles",
+        description: "Five connected squares with a triangle on top of each.",
         matchsticks: [
-          ...starOfDavid(0, 25),
-          ...diamond(50, 28),
-          ...starOfDavid(90, 25),
+          ...connectedSquaresRow(0, G, 5),
+          // Triangles sitting on top of each square
+          ...triangle(0, -G + G),
+          ...triangle(G, -G + G),
+          ...triangle(G * 2, -G + G),
+          ...triangle(G * 3, -G + G),
+          ...triangle(G * 4, -G + G),
         ],
-        totalMatchsticks: 16,
       },
       {
-        name: "Fish School",
-        description: "Three fish swimming in a row.",
-        hint: "3 x 7",
+        name: "Hexagons with a Diamond",
+        description: "Four hexagons in a row, and a diamond at the end.",
         matchsticks: [
-          ...fish(0, 25),
-          ...fish(55, 25),
-          ...fish(110, 25),
+          ...hexagon(0, 30),
+          ...hexagon(SP, 30),
+          ...hexagon(SP * 2, 30),
+          ...hexagon(SP * 3, 30),
+          // Non-repeating extra
+          ...diamond(SP * 4 + 5, 32),
         ],
-        totalMatchsticks: 21,
-      },
-      {
-        name: "Crown & Trees",
-        description: "A crown flanked by two trees.",
-        hint: "4 + 9 + 4",
-        matchsticks: [
-          ...tree(0, 20),
-          ...crown(45, 25),
-          ...tree(120, 20),
-        ],
-        totalMatchsticks: 17,
-      },
-      {
-        name: "Windmill Garden",
-        description: "Two windmills with a kite shape between them.",
-        hint: "8 + 4 + 8",
-        matchsticks: [
-          ...windmill(0, 15),
-          ...kite(60, 30),
-          ...windmill(100, 15),
-        ],
-        totalMatchsticks: 20,
       },
     ],
   },
 
-  // ━━━ LEVEL 5: Complex compound patterns ━━━
+  // ━━━ LEVEL 5: Complex repetitive compounds + extras ━━━
   {
     level: 5,
     patterns: [
       {
-        name: "The Rocket",
-        description: "A rocket: nose cone + 3 body segments + 2 fins + exhaust.",
-        hint: "2 + 10 + 4 + 2 = 18",
-        matchsticks: rocket(40, 0),
-        totalMatchsticks: 18,
-      },
-      {
-        name: "Village Scene",
-        description: "Three houses, two trees, and a fence. Count everything!",
-        hint: "3x6 + 2x4 + fence",
+        name: "House Village",
+        description: "Five houses in a row flanked by two trees.",
         matchsticks: [
-          ...tree(0, 5),
-          ...house(40, 5),
-          ...house(90, 5),
-          ...house(140, 5),
-          ...tree(185, 5),
-          ...fence(40, 75, 6),
+          ...tree(0, 10),
+          ...house(SP, 10),
+          ...house(SP * 2, 10),
+          ...house(SP * 3, 10),
+          ...house(SP * 4, 10),
+          ...house(SP * 5, 10),
+          ...tree(SP * 6, 10),
         ],
-        totalMatchsticks: 4 + 18 + 4 + 6 + 10, // tree + 3 houses + tree + fence(6posts+10rails)
       },
       {
         name: "Castle Wall",
-        description: "A 4x2 grid of squares topped with 4 triangles.",
-        hint: "Grid + separate triangles",
+        description: "A row of connected squares topped with triangles and a flag.",
         matchsticks: [
-          ...squareGrid(10, 40, 4, 2),
-          ...triangle(10, 10),
-          ...triangle(40, 10),
-          ...triangle(70, 10),
-          ...triangle(100, 10),
+          // 6 connected squares as wall
+          ...connectedSquaresRow(0, G * 2, 6),
+          // 6 triangles as battlements on top
+          ...triangle(0, G * 2 - G),
+          ...triangle(G, G * 2 - G),
+          ...triangle(G * 2, G * 2 - G),
+          ...triangle(G * 3, G * 2 - G),
+          ...triangle(G * 4, G * 2 - G),
+          ...triangle(G * 5, G * 2 - G),
+          // Flag on the last triangle (non-repeating extra)
+          m(G * 5 + G * 0.5, G * 2 - G, G * 5 + G * 0.5, G * 2 - G * 1.8),
+          m(G * 5 + G * 0.5, G * 2 - G * 1.8, G * 5 + G, G * 2 - G * 1.4),
         ],
-        totalMatchsticks: 24 + 12, // 4x2 grid = 4*3+5*2 = 22... wait let me recalculate
       },
       {
-        name: "Fleet of Boats",
-        description: "Four boats sailing with triangle flags above.",
-        hint: "4x6 + 4x3",
+        name: "Boat Fleet",
+        description: "Four boats in a row with a star flag at the end.",
         matchsticks: [
-          ...boat(0, 20),
-          ...triangle(G * 0.3, 0),
-          ...boat(65, 20),
-          ...triangle(65 + G * 0.3, 0),
-          ...boat(130, 20),
-          ...triangle(130 + G * 0.3, 0),
-          ...boat(195, 20),
-          ...triangle(195 + G * 0.3, 0),
+          ...boat(0, 15),
+          ...boat(G * 2.2, 15),
+          ...boat(G * 4.4, 15),
+          ...boat(G * 6.6, 15),
+          // Non-repeating extra — star flag
+          ...starOfDavid(G * 8.8 + 5, 20),
         ],
-        totalMatchsticks: 36,
       },
       {
-        name: "Garden Party",
-        description: "Crowns, windmills, and stars — the grand finale!",
-        hint: "Mixed shapes everywhere",
+        name: "Diamond Grid",
+        description: "Three rows of four diamonds each — count carefully!",
         matchsticks: [
-          ...crown(0, 5),
-          ...windmill(80, 0),
-          ...starOfDavid(0, 55),
-          ...hexagon(55, 60),
-          ...starOfDavid(95, 55),
+          // Row 1
+          ...diamond(0, 0),
+          ...diamond(SP, 0),
+          ...diamond(SP * 2, 0),
+          ...diamond(SP * 3, 0),
+          // Row 2
+          ...diamond(0, SP),
+          ...diamond(SP, SP),
+          ...diamond(SP * 2, SP),
+          ...diamond(SP * 3, SP),
+          // Row 3
+          ...diamond(0, SP * 2),
+          ...diamond(SP, SP * 2),
+          ...diamond(SP * 2, SP * 2),
+          ...diamond(SP * 3, SP * 2),
         ],
-        totalMatchsticks: 9 + 8 + 6 + 6 + 6, // 35
+      },
+      {
+        name: "The Grand Pattern",
+        description: "Connected squares with houses on top and a rocket at the end.",
+        matchsticks: [
+          // Base: 4 connected squares
+          ...connectedSquaresRow(0, G * 3, 4),
+          // 4 houses sitting on the base
+          ...house(0, G),
+          ...house(G, G),
+          ...house(G * 2, G),
+          ...house(G * 3, G),
+          // Non-repeating rocket at the end
+          ...rocket(G * 5, 0),
+        ],
       },
     ],
   },
 ];
 
-// ─── Fix counts by actually counting matchstick arrays ───
-// This ensures totalMatchsticks always matches the actual array length
+// Auto-calculate totalMatchsticks from actual array length
 for (const level of levels) {
   for (const pattern of level.patterns) {
     pattern.totalMatchsticks = pattern.matchsticks.length;
