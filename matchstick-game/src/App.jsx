@@ -57,6 +57,7 @@ export default function App() {
         timeLeft: 0,
         isLevelComplete,
         isGameComplete,
+        pattern: currentPattern,
       });
       setGameState("result");
     }
@@ -107,6 +108,7 @@ export default function App() {
         timeLeft,
         isLevelComplete,
         isGameComplete,
+        pattern: currentPattern,
       });
       setGameState("result");
     },
@@ -116,10 +118,8 @@ export default function App() {
   const handlePause = useCallback(() => {
     setIsPaused((prev) => {
       if (prev) {
-        // Resuming
         start();
       } else {
-        // Pausing
         stop();
       }
       return !prev;
