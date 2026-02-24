@@ -7,10 +7,9 @@ const HEAD_COLOR = "#cc2222";
 const HEAD_HIGHLIGHT = "#e84040";
 
 export default function MatchstickCanvas({ matchsticks, width = 500, height = 350, compact = false }) {
-  // Collect unique vertex positions so we only draw ONE head per shared vertex
-  const { viewBox, uniqueHeads, stickBodies } = useMemo(() => {
+  const { viewBox, uniqueHeads, filterId } = useMemo(() => {
     if (!matchsticks || matchsticks.length === 0) {
-      return { viewBox: "0 0 100 100", uniqueHeads: [], stickBodies: [] };
+      return { viewBox: "0 0 100 100", uniqueHeads: [], filterId: "ss0" };
     }
 
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -26,38 +25,30 @@ export default function MatchstickCanvas({ matchsticks, width = 500, height = 35
     const vbY = minY - padding;
     const vbW = Math.max(maxX - minX + padding * 2, 1);
     const vbH = Math.max(maxY - minY + padding * 2, 1);
-    const vb = `${vbX} ${vbY} ${vbW} ${vbH}`;
 
-    // Build stick body data
-    const bodies = [];
-    // Track unique vertex positions using rounded keys
+    // Deduplicate vertex positions for heads
     const headMap = new Map();
-
-    for (let i = 0; i < matchsticks.length; i++) {
-      const stick = matchsticks[i];
+    for (const stick of matchsticks) {
       const dx = stick.x2 - stick.x1;
       const dy = stick.y2 - stick.y1;
       const len = Math.sqrt(dx * dx + dy * dy);
       if (len === 0) continue;
 
-      bodies.push({ stick, len, idx: i });
-
-      // Register head vertex (x1,y1) — deduplicate by rounded position
-      const hKey = `${Math.round(stick.x1 * 10)},${Math.round(stick.y1 * 10)}`;
-      if (!headMap.has(hKey)) {
-        headMap.set(hKey, { x: stick.x1, y: stick.y1, len });
-      }
-      // Register tail vertex (x2,y2) too
-      const tKey = `${Math.round(stick.x2 * 10)},${Math.round(stick.y2 * 10)}`;
-      if (!headMap.has(tKey)) {
-        headMap.set(tKey, { x: stick.x2, y: stick.y2, len });
+      for (const [px, py] of [[stick.x1, stick.y1], [stick.x2, stick.y2]]) {
+        const key = `${Math.round(px * 10)},${Math.round(py * 10)}`;
+        if (!headMap.has(key)) {
+          headMap.set(key, { x: px, y: py, len });
+        }
       }
     }
 
+    // Unique filter ID to avoid conflicts when multiple canvases exist
+    const fid = `ss${Math.random().toString(36).slice(2, 6)}`;
+
     return {
-      viewBox: vb,
+      viewBox: `${vbX} ${vbY} ${vbW} ${vbH}`,
       uniqueHeads: Array.from(headMap.values()),
-      stickBodies: bodies,
+      filterId: fid,
     };
   }, [matchsticks, compact]);
 
@@ -72,37 +63,34 @@ export default function MatchstickCanvas({ matchsticks, width = 500, height = 35
         style={{
           background: BG_COLOR,
           borderRadius: compact ? "8px" : "12px",
-          border: `2px solid #333`,
+          border: "2px solid #333",
           maxWidth: "100%",
         }}
       >
         <defs>
-          <filter id="stickShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <filter id={filterId} x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0.4" dy="0.6" stdDeviation="0.5" floodColor="#000" floodOpacity="0.35" />
           </filter>
         </defs>
 
-        {/* Draw all stick bodies first (below heads) */}
-        {stickBodies.map(({ stick, len, idx }) => {
+        {/* Layer 1: Draw all matchstick wooden bodies (no heads) */}
+        {matchsticks.map((stick, i) => {
           const dx = stick.x2 - stick.x1;
           const dy = stick.y2 - stick.y1;
-          const ux = dx / len;
-          const uy = dy / len;
-          const headRadius = Math.min(len * 0.09, 2.8);
-          const bodyStartX = stick.x1 + ux * headRadius * 1.3;
-          const bodyStartY = stick.y1 + uy * headRadius * 1.3;
+          const len = Math.sqrt(dx * dx + dy * dy);
+          if (len === 0) return null;
 
           return (
-            <g key={`body-${idx}`} filter="url(#stickShadow)">
+            <g key={`b-${i}`} filter={`url(#${filterId})`}>
               <line
-                x1={bodyStartX} y1={bodyStartY}
+                x1={stick.x1} y1={stick.y1}
                 x2={stick.x2} y2={stick.y2}
                 stroke={WOOD_DARK}
                 strokeWidth={bodyWidth + 0.6}
                 strokeLinecap="round"
               />
               <line
-                x1={bodyStartX} y1={bodyStartY}
+                x1={stick.x1} y1={stick.y1}
                 x2={stick.x2} y2={stick.y2}
                 stroke={WOOD_COLOR}
                 strokeWidth={bodyWidth}
@@ -112,11 +100,11 @@ export default function MatchstickCanvas({ matchsticks, width = 500, height = 35
           );
         })}
 
-        {/* Draw unique vertex dots on top — no overlapping */}
+        {/* Layer 2: Draw ONE dot per unique vertex — no overlapping */}
         {uniqueHeads.map((h, i) => {
           const headRadius = Math.min(h.len * 0.09, 2.8);
           return (
-            <g key={`head-${i}`}>
+            <g key={`h-${i}`}>
               <circle cx={h.x} cy={h.y} r={headRadius + 0.3} fill={HEAD_COLOR} />
               <circle cx={h.x} cy={h.y} r={headRadius * 0.6} fill={HEAD_HIGHLIGHT} opacity="0.6" />
             </g>
