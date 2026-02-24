@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
+import MatchstickCanvas from "./MatchstickCanvas";
 
 const AUTO_ADVANCE_SECONDS = 4;
+const REVIEW_PAUSE_SECONDS = 8;
 
 export default function ResultScreen({
   correct,
@@ -12,6 +14,7 @@ export default function ResultScreen({
   timeLeft,
   isLevelComplete,
   isGameComplete,
+  pattern,
   onNext,
   onReplay,
   onNextLevel,
@@ -21,13 +24,14 @@ export default function ResultScreen({
   const [paused, setPaused] = useState(false);
   const intervalRef = useRef(null);
 
-  // Should auto-advance? Only when not level-complete and not game-complete
   const canAutoAdvance = !isLevelComplete && !isGameComplete;
+  // On wrong answer, auto-pause longer so player can study the pattern
+  const autoSeconds = !isCorrect ? REVIEW_PAUSE_SECONDS : AUTO_ADVANCE_SECONDS;
 
   useEffect(() => {
     if (!canAutoAdvance || paused) return;
 
-    setCountdown(AUTO_ADVANCE_SECONDS);
+    setCountdown(autoSeconds);
     intervalRef.current = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
@@ -42,7 +46,7 @@ export default function ResultScreen({
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [canAutoAdvance, paused, onNext]);
+  }, [canAutoAdvance, paused, onNext, autoSeconds]);
 
   const handlePauseToggle = () => {
     if (paused) {
@@ -62,6 +66,29 @@ export default function ResultScreen({
       <h2 className={isCorrect ? "text-correct" : "text-incorrect"}>
         {isCorrect ? "Correct!" : "Not Quite!"}
       </h2>
+
+      {/* On wrong answer, show the pattern again with your answer vs correct */}
+      {!isCorrect && pattern && (
+        <div className="review-section">
+          <div className="review-header">
+            <span className="review-label">Review: {pattern.name}</span>
+          </div>
+          <MatchstickCanvas
+            matchsticks={pattern.matchsticks}
+            width={400}
+            height={240}
+            compact
+          />
+          <div className="review-comparison">
+            <div className="review-badge review-yours">
+              Your answer: <strong>{playerAnswer}</strong>
+            </div>
+            <div className="review-badge review-correct">
+              Correct: <strong>{correctAnswer}</strong>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="result-details">
         <div className="result-row">
@@ -101,7 +128,6 @@ export default function ResultScreen({
         </div>
       )}
 
-      {/* Auto-advance countdown for mid-level patterns */}
       {canAutoAdvance && (
         <div className="auto-advance">
           {paused ? (

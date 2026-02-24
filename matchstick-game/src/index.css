@@ -26,10 +26,21 @@
   line-height: 1.5;
   color: var(--text-primary);
   background-color: var(--bg-primary);
+
+  /* Prevent font size inflation on mobile */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html {
+  /* Prevent scroll bounce on iOS */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,6 +49,7 @@ body {
 #root {
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;

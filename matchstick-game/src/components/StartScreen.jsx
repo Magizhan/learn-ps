@@ -15,7 +15,8 @@ export default function StartScreen({ onStart }) {
           <li>Count the total number of matchsticks</li>
           <li>Submit your answer before the 60-second timer runs out</li>
           <li>Earn points for correct answers — bonus for speed!</li>
-          <li>Complete patterns to advance to harder levels</li>
+          <li>Complete patterns to advance through 7 levels of difficulty</li>
+          <li>Shapes include squares, triangles, pentagons, hexagons, and more!</li>
         </ul>
       </div>
       <button className="btn btn-primary btn-large" onClick={onStart}>
