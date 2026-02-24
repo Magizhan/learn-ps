@@ -7,9 +7,9 @@ const HEAD_COLOR = "#cc2222";
 const HEAD_HIGHLIGHT = "#e84040";
 
 export default function MatchstickCanvas({ matchsticks, width = 500, height = 350, compact = false }) {
-  const { viewBox, uniqueHeads, filterId } = useMemo(() => {
+  const { viewBox, uniqueHeads } = useMemo(() => {
     if (!matchsticks || matchsticks.length === 0) {
-      return { viewBox: "0 0 100 100", uniqueHeads: [], filterId: "ss0" };
+      return { viewBox: "0 0 100 100", uniqueHeads: [] };
     }
 
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -42,13 +42,9 @@ export default function MatchstickCanvas({ matchsticks, width = 500, height = 35
       }
     }
 
-    // Unique filter ID to avoid conflicts when multiple canvases exist
-    const fid = `ss${Math.random().toString(36).slice(2, 6)}`;
-
     return {
       viewBox: `${vbX} ${vbY} ${vbW} ${vbH}`,
       uniqueHeads: Array.from(headMap.values()),
-      filterId: fid,
     };
   }, [matchsticks, compact]);
 
@@ -67,13 +63,7 @@ export default function MatchstickCanvas({ matchsticks, width = 500, height = 35
           maxWidth: "100%",
         }}
       >
-        <defs>
-          <filter id={filterId} x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0.4" dy="0.6" stdDeviation="0.5" floodColor="#000" floodOpacity="0.35" />
-          </filter>
-        </defs>
-
-        {/* Layer 1: Draw all matchstick wooden bodies (no heads) */}
+        {/* Layer 1: Draw all matchstick wooden bodies */}
         {matchsticks.map((stick, i) => {
           const dx = stick.x2 - stick.x1;
           const dy = stick.y2 - stick.y1;
@@ -81,7 +71,7 @@ export default function MatchstickCanvas({ matchsticks, width = 500, height = 35
           if (len === 0) return null;
 
           return (
-            <g key={`b-${i}`} filter={`url(#${filterId})`}>
+            <g key={`b-${i}`}>
               <line
                 x1={stick.x1} y1={stick.y1}
                 x2={stick.x2} y2={stick.y2}
